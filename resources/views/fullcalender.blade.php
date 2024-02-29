@@ -24,11 +24,14 @@
             text-align: center;
             border-radius: 40px;
         }
+
+
+
     </style>
 </head>
 <body>
 
-<div class="container text-center">
+<div class="text-center">
     <h2 class="m-5">Room Calendar </h2>
     <!-- Modal HTML -->
     <div id="addEventModal" class="modal fade">
@@ -90,7 +93,7 @@
                     $.each(data.newEvents, function(index, event) {
                         calendar.fullCalendar('renderEvent', event, true);
                     });
-
+                    calendar.fullCalendar('removeEventSources');
                     calendar.fullCalendar('removeEvents');
                     calendar.fullCalendar('addEventSource', data.allEvents);
                     calendar.fullCalendar('unselect');
@@ -139,6 +142,10 @@
                 } else {
                     event.allDay = false;
                 }
+                // Append a new div element after the .fc-title element
+                var newDiv = $('<div>').addClass('fc-price').html('Price : 20 OMR');
+                element.find('.fc-title').after(newDiv);
+                element.find('.fc-title').html('Availability : '+event.title);
             },
             selectable: true,
             selectHelper: true,
