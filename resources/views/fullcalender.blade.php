@@ -43,7 +43,8 @@
                 </div>
                 <div class="modal-body">
                     <!-- Input fields for event title, start date, end date -->
-                    <input  class="form-control mt-3" type="text" id="eventTitle" placeholder="Room Number">
+                    <input  class="form-control mt-3" type="text" id="roomNumber" placeholder="Room Number">
+                    <input  class="form-control mt-3" type="text" id="roomPrice" placeholder="Room Price">
                     <input class="form-control mt-3" type="text" id="eventStart" placeholder="Start Date">
                     <input  class="form-control mt-3" type="text" id="eventEnd" placeholder="End Date">
                 </div>
@@ -64,14 +65,16 @@
 
         $('#saveEvent').on('click', function() {
 
-            const title = $('#eventTitle').val();
+            const room_number = $('#roomNumber').val();
+            const room_price = $('#roomPrice').val();
             const start = $('#eventStart').val();
             const end = $('#eventEnd').val();
 
             $.ajax({
                 url: "{{route('events')}}",
                 data: {
-                    title: title,
+                    room_number: room_number,
+                    room_price: room_price,
                     start: start,
                     end: end,
                     type: 'add'
@@ -143,9 +146,9 @@
                     event.allDay = false;
                 }
                 // Append a new div element after the .fc-title element
-                var newDiv = $('<div>').addClass('fc-price').html('Price : 20 OMR');
+                var newDiv = $('<div>').addClass('fc-price').html('Price : ' + event.room_price + ' OMR');
                 element.find('.fc-title').after(newDiv);
-                element.find('.fc-title').html('Availability : '+event.title);
+                element.find('.fc-title').html('Availability : '+event.room_number);
             },
             selectable: true,
             selectHelper: true,
@@ -159,15 +162,18 @@
                 });
 
                 if (events.length > 0) {
-                    const eventTitle = events[0].title;
-                    $('#eventTitle').val(eventTitle);
+                    const roomNumber = events[0].room_number;
+                    const roomPrice = events[0].room_price;
+                    $('#roomNumber').val(roomNumber);
+                    $('#roomPrice').val(roomPrice);
                     $('#eventStart').val(startDate);
                     $('#eventEnd').val(endDate);
 
                     $('#addEventModal').modal('show');
                 }else{
 
-                    $('#eventTitle').val('');
+                    $('#roomNumber').val('');
+                    $('#roomPrice').val('');
                     $('#eventStart').val(startDate);
                     $('#eventEnd').val(endDate);
                     $('#addEventModal').modal('show');
@@ -182,7 +188,8 @@
                 $.ajax({
                     url: "{{route('events')}}",
                     data: {
-                        title: event.title,
+                        room_number: event.room_number,
+                        room_price: event.room_price,
                         start: start,
                         end: end,
                         id: event.id,

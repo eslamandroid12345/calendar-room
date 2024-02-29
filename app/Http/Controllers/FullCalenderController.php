@@ -20,7 +20,7 @@ class FullCalenderController extends Controller
 
             $data = Event::whereDate('start', '>=', $request->start)
                 ->whereDate('end',   '<=', $request->end)
-                ->get(['id', 'title', 'start', 'end']);
+                ->get(['id', 'room_number','room_price', 'start', 'end']);
 
             return response()->json($data);
         }
@@ -40,7 +40,8 @@ class FullCalenderController extends Controller
         switch ($request->type) {
             case 'add':
                 $request->validate([
-                    'title' => 'required|numeric',
+                    'room_number' => 'required|numeric',
+                    'room_price' => 'required|numeric',
                     'start' => 'required|date|date_format:Y-m-d',
                     'end' => 'required|date|date_format:Y-m-d',
                 ]);
@@ -71,14 +72,16 @@ class FullCalenderController extends Controller
             if ($updateMultipleEvents->count() > 0) {
                 foreach ($updateMultipleEvents as $eventM) {
                     $eventM->update([
-                        'title' => $request->title,
+                        'room_number' => $request->room_number,
+                        'room_price' => $request->room_price,
                         'start' => $begin->format("Y-m-d"),
                         'end'   => $begin->modify('+1 day')->format("Y-m-d"),
                     ]);
                 }
             }else{
                 $event = Event::create([
-                    'title' => $request->title,
+                    'room_number' => $request->room_number,
+                    'room_price' => $request->room_price,
                     'start' => $begin->format("Y-m-d"),
                     'end'   => $begin->modify('+1 day')->format("Y-m-d"),
                 ]);
@@ -97,7 +100,8 @@ class FullCalenderController extends Controller
         $event = Event::find($request->id);
         if ($event) {
             $event->update([
-                'title' => $request->title,
+                'room_number' => $request->room_number,
+                'room_price' => $request->room_price,
                 'start' => $request->start,
                 'end'   => $request->end,
             ]);
