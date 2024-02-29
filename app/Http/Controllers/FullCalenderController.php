@@ -36,8 +36,14 @@ class FullCalenderController extends Controller
 
     public function ajax(Request $request): JsonResponse
     {
+
         switch ($request->type) {
             case 'add':
+                $request->validate([
+                    'title' => 'required|numeric',
+                    'start' => 'required|date|date_format:Y-m-d',
+                    'end' => 'required|date|date_format:Y-m-d',
+                ]);
                 return $this->addEvent($request);
             case 'update':
                 return $this->updateEvent($request);

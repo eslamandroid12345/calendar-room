@@ -22,7 +22,7 @@ Route::get('/', function () {
 
 
 Route::controller(FullCalenderController::class)->group(function(){
-    Route::get('fullcalender', 'index');
-    Route::post('fullcalenderAjax', 'ajax');
+    Route::get('fullcalender', 'index')->name('events.create');
+    Route::post('fullcalenderAjax', 'ajax')->name('events');
 });
 
