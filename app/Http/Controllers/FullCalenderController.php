@@ -42,12 +42,10 @@ class FullCalenderController extends Controller
                 $request->validate([
                     'room_number' => 'required|numeric',
                     'room_price' => 'required|numeric',
-                    'start' => 'required|date|date_format:Y-m-d',
-                    'end' => 'required|date|date_format:Y-m-d',
+                    'start' => 'required|date|date_format:Y-m-d|after_or_equal:today',
+                    'end' => 'required|date|date_format:Y-m-d|after:start',
                 ]);
                 return $this->addEvent($request);
-            case 'update':
-                return $this->updateEvent($request);
             case 'delete':
                 return $this->deleteEvent($request);
             default:
@@ -95,21 +93,6 @@ class FullCalenderController extends Controller
         return response()->json(['newEvents' => $events, 'allEvents' => $allEvents]);
     }
 
-    private function updateEvent(Request $request): JsonResponse
-    {
-        $event = Event::find($request->id);
-        if ($event) {
-            $event->update([
-                'room_number' => $request->room_number,
-                'room_price' => $request->room_price,
-                'start' => $request->start,
-                'end'   => $request->end,
-            ]);
-            return response()->json($event);
-        } else {
-            return response()->json(['message' => 'Event not found'], 404);
-        }
-    }
 
     private function deleteEvent(Request $request): JsonResponse
     {
