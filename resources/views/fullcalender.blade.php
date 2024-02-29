@@ -135,10 +135,9 @@
         });
 
         var calendar = $('#calendar').fullCalendar({
-            editable: true,
             events: "{{route('events.create')}}",
             displayEventTime: false,
-            editable: true,
+            editable: false,
             eventRender: function (event, element, view) {
                 if (event.allDay === 'true') {
                     event.allDay = true;
@@ -179,27 +178,6 @@
                     $('#addEventModal').modal('show');
                 }
 
-            },
-
-            eventDrop: function (event, delta) {
-                const start = $.fullCalendar.formatDate(event.start, "Y-MM-DD");
-                const end = $.fullCalendar.formatDate(event.end, "Y-MM-DD");
-
-                $.ajax({
-                    url: "{{route('events')}}",
-                    data: {
-                        room_number: event.room_number,
-                        room_price: event.room_price,
-                        start: start,
-                        end: end,
-                        id: event.id,
-                        type: 'update'
-                    },
-                    type: "POST",
-                    success: function (response) {
-                        toastr.success('تم تعديل تاريخ الغرفه بنجاح','تعديل');
-                    }
-                });
             },
 
             eventClick: function (event) {
