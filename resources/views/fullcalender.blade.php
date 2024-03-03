@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Fullcalendar using Ajax example with Laravel 9 Application - Mywebtuts.com</title>
+    <title>Room Calendar</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.css" />
@@ -96,6 +96,7 @@
                     $.each(data.newEvents, function(index, event) {
                         calendar.fullCalendar('renderEvent', event, true);
                     });
+
                     calendar.fullCalendar('removeEventSources');
                     calendar.fullCalendar('removeEvents');
                     calendar.fullCalendar('addEventSource', data.allEvents);
@@ -167,7 +168,6 @@
                     $('#roomPrice').val(roomPrice);
                     $('#eventStart').val(startDate);
                     $('#eventEnd').val(endDate);
-
                     $('#addEventModal').modal('show');
                 }else{
 
