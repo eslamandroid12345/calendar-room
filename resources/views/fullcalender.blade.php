@@ -89,6 +89,9 @@
 
                     toastr.success('تم اضافه تواريخ الغرفه بنجاح','اضافه');
 
+                    const sound = new Audio('{{asset('sound/ringtone-you-would-be-glad-to-know.ogg')}}');
+                    sound.play();
+
                     $('#saveEvent').html(`Save changes`).attr('disabled', false);
 
 
@@ -193,6 +196,8 @@
                         success: function (response) {
                             calendar.fullCalendar('removeEvents', event.id);
                             toastr.error('تم حذف تاريخ الغرفه بنجاح','حذف');
+                            const sound = new Audio('{{asset('sound/ringtone-you-would-be-glad-to-know.ogg')}}');
+                            sound.play();
 
                         }
                     });
