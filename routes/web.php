@@ -24,6 +24,7 @@ Route::get('/', function () {
 Route::controller(FullCalenderController::class)->group(function(){
     Route::get('fullcalender', 'index')->name('events.create');
     Route::post('fullcalenderAjax', 'ajax')->name('events');
+    Route::post('delete-event', 'deleteEvent')->name('delete.event');
 });
 
 Route::get('get-all-events', function (){

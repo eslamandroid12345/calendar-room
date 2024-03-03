@@ -32,7 +32,7 @@
 <body>
 
 <div class="text-center">
-    <h2 class="m-5">Room Calendar </h2>
+    <h2 class="m-5">Room Calendar</h2>
     <!-- Modal HTML -->
     <div id="addEventModal" class="modal fade">
         <div class="modal-dialog">
@@ -63,6 +63,7 @@
 
     $(document).ready(function () {
 
+
         $('#saveEvent').on('click', function() {
 
             const room_number = $('#roomNumber').val();
@@ -86,51 +87,53 @@
 
                 type: "POST",
                 success: function (data) {
-
-                    toastr.success('تم اضافه تواريخ الغرفه بنجاح','اضافه');
-
-                    const sound = new Audio('{{asset('sound/ringtone-you-would-be-glad-to-know.ogg')}}');
-                    sound.play();
-
-                    $('#saveEvent').html(`Save changes`).attr('disabled', false);
-
-
-                    // Render newly created events
-                    $.each(data.newEvents, function(index, event) {
-                        calendar.fullCalendar('renderEvent', event, true);
-                    });
-
-                    calendar.fullCalendar('removeEventSources');
-                    calendar.fullCalendar('removeEvents');
-                    calendar.fullCalendar('addEventSource', data.allEvents);
-                    calendar.fullCalendar('unselect');
-
-                    $('#addEventModal').modal('hide');
+                    handleSaveSuccess(data, calendar);
                 },
 
                 error: function (data) {
-                    if (data.status === 500) {
-                        toastr.error('There is an error');
-                        $('#saveEvent').html(`Save changes`).attr('disabled', false);
-                    } else if (data.status === 422) {
-                        const errors = $.parseJSON(data.responseText);
-                        $.each(errors, function (key, value) {
-                            if ($.isPlainObject(value)) {
-                                $.each(value, function (key, value){
-                                    toastr.error(value,key);
-                                });
-                            }
-                        });
-                        $('#saveEvent').html(`Save changes`).attr('disabled', false);
-
-                    } else{
-                        toastr.error('there in an error');
-                        $('#saveEvent').html(`Save changes`).attr('disabled', false);
-                    }
-
-                },//end error method
+                    handleSaveError(data);
+                },
             });
         });//end
+
+        function handleSaveSuccess(data, calendar) {
+            toastr.success('تم اضافه تواريخ الغرفه بنجاح', 'اضافه');
+            const sound = new Audio('{{asset('sound/ringtone-you-would-be-glad-to-know.ogg')}}');
+            sound.play();
+
+            $('#saveEvent').html(`Save changes`).attr('disabled', false);
+
+            $.each(data.newEvents, function (index, event) {
+                calendar.fullCalendar('renderEvent', event, true);
+            });
+
+            calendar.fullCalendar('removeEventSources');
+            calendar.fullCalendar('removeEvents');
+            calendar.fullCalendar('addEventSource', data.allEvents);
+            calendar.fullCalendar('unselect');
+
+            $('#addEventModal').modal('hide');
+        }//end success store
+
+        function handleSaveError(data) {
+            if (data.status === 500) {
+                toastr.error('There is an error');
+                $('#saveEvent').html(`Save changes`).attr('disabled', false);
+            } else if (data.status === 422) {
+                const errors = $.parseJSON(data.responseText);
+                $.each(errors, function (key, value) {
+                    if ($.isPlainObject(value)) {
+                        $.each(value, function (key, value) {
+                            toastr.error(value, key);
+                        });
+                    }
+                });
+                $('#saveEvent').html(`Save changes`).attr('disabled', false);
+            } else {
+                toastr.error('there in an error');
+                $('#saveEvent').html(`Save changes`).attr('disabled', false);
+            }
+        }//end handle server
 
         $.ajaxSetup({
             headers: {
@@ -148,7 +151,6 @@
                 } else {
                     event.allDay = false;
                 }
-                // Append a new div element after the .fc-title element
                 var newDiv = $('<div>').addClass('fc-price').html('Price : ' + event.room_price + ' OMR');
                 element.find('.fc-title').after(newDiv);
                 element.find('.fc-title').html('Availability : '+event.room_number);
@@ -188,10 +190,9 @@
                 if (deleteMsg) {
                     $.ajax({
                         type: "POST",
-                        url: "{{route('events')}}",
+                        url: "{{route('delete.event')}}",
                         data: {
                             id: event.id,
-                            type: 'delete'
                         },
                         success: function (response) {
                             calendar.fullCalendar('removeEvents', event.id);

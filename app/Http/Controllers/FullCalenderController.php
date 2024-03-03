@@ -37,23 +37,17 @@ class FullCalenderController extends Controller
     public function ajax(Request $request): JsonResponse
     {
 
-        switch ($request->type) {
-            case 'add':
-                $request->validate([
-                    'room_number' => 'required|numeric',
-                    'room_price' => 'required|numeric',
-                    'start' => 'required|date|date_format:Y-m-d|after_or_equal:today',
-                    'end' => 'required|date|date_format:Y-m-d|after:start',
-                ]);
-                return $this->addEvent($request);
-            case 'delete':
-                return $this->deleteEvent($request);
-            default:
-                return response()->json(['error' => 'Invalid request type']);
-        }
+        $request->validate([
+            'room_number' => 'required|numeric',
+            'room_price' => 'required|numeric',
+            'start' => 'required|date|date_format:Y-m-d|after_or_equal:today',
+            'end' => 'required|date|date_format:Y-m-d|after:start',
+        ]);
+
+        return $this->addEvent($request);
     }
 
-    private function addEvent(Request $request): JsonResponse
+    protected function addEvent(Request $request): JsonResponse
     {
         $begin = new \DateTime($request->start);
         $end   = new \DateTime($request->end);
@@ -94,7 +88,7 @@ class FullCalenderController extends Controller
     }
 
 
-    private function deleteEvent(Request $request): JsonResponse
+    public function deleteEvent(Request $request): JsonResponse
     {
         $event = Event::find($request->id);
         if ($event) {
