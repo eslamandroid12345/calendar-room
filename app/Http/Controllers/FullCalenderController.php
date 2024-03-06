@@ -20,7 +20,7 @@ class FullCalenderController extends Controller
 
             $data = Event::whereDate('start', '>=', $request->start)
                 ->whereDate('end',   '<=', $request->end)
-                ->get(['id', 'room_number','room_price', 'start', 'end']);
+                ->get(['id', 'room_number','room_price', 'start', 'end','bookable','status']);
 
             return response()->json($data);
         }
@@ -68,6 +68,8 @@ class FullCalenderController extends Controller
                         'room_price' => $request->room_price,
                         'start' => $begin->format("Y-m-d"),
                         'end'   => $begin->modify('+1 day')->format("Y-m-d"),
+                        'status' => $request->status,
+
                     ]);
                 }
             }else{
@@ -76,6 +78,7 @@ class FullCalenderController extends Controller
                     'room_price' => $request->room_price,
                     'start' => $begin->format("Y-m-d"),
                     'end'   => $begin->modify('+1 day')->format("Y-m-d"),
+                    'status' => $request->status,
                 ]);
 
                 $events[] = $event;

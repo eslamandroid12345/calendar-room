@@ -10,7 +10,7 @@ class Event extends Model
     use HasFactory;
 
     protected $fillable = [
-        'room_number','room_price', 'start', 'end'
+        'room_number','room_price', 'start', 'end','status','bookable'
     ];
 
 }

@@ -20,9 +20,52 @@
 
         tr:first-child > td > .fc-day-grid-event {
             margin-top: 2px;
-            padding: 8px;
+            padding: 6px;
             text-align: center;
+            border: none;
+            font-size: 12px;
+            height: auto;
+        }
+
+        .fc-event, .fc-event-dot {
+            background-color: #fff;
+        }
+
+
+        .fc-title{
+
+            display: none;
+        }
+
+        .fc-room-number,.fc-price,.fc-bookable{
+            padding: 7px;
+            background: #f8c291;
+            color: #fff;
             border-radius: 40px;
+            margin-top: 3px;
+        }
+
+        .fc-closed{
+            padding: 7px;
+            background: #d63031;
+            color: #fff;
+            border-radius: 40px;
+            margin-top: 3px;
+        }
+        p,
+        label {
+            font:
+                1rem 'Fira Sans',
+                sans-serif;
+        }
+
+        input {
+            margin: 0.4rem;
+        }
+
+        fieldset{
+
+            text-align: left;
         }
 
 
@@ -32,7 +75,7 @@
 <body>
 
 <div class="text-center">
-    <h2 class="m-5">Room Calendar</h2>
+    <h2 class="m-5">Dulex King Room</h2>
     <!-- Modal HTML -->
     <div id="addEventModal" class="modal fade">
         <div class="modal-dialog">
@@ -43,10 +86,28 @@
                 </div>
                 <div class="modal-body">
                     <!-- Input fields for event title, start date, end date -->
-                    <input  class="form-control mt-3" type="text" id="roomNumber" placeholder="Room Number">
-                    <input  class="form-control mt-3" type="text" id="roomPrice" placeholder="Room Price">
+                    <input  class="form-control mt-3" type="text" id="roomNumber" placeholder="Rooms to sell">
+                    <input  class="form-control mt-3" type="text" id="roomPrice" placeholder="Price">
                     <input class="form-control mt-3" type="text" id="eventStart" placeholder="Start Date">
                     <input  class="form-control mt-3" type="text" id="eventEnd" placeholder="End Date">
+
+                    <fieldset class="mt-3">
+                        <legend>Select Status To Room : </legend>
+
+                        <div>
+                            <input type="radio" id="opened" name="status" value="opened" checked />
+                            <label for="opened">Opened</label>
+                        </div>
+
+                        <div>
+                            <input type="radio" id="closed" name="status" value="closed" />
+                            <label for="closed">Closed</label>
+                        </div>
+
+                    </fieldset>
+
+
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -70,6 +131,7 @@
             const room_price = $('#roomPrice').val();
             const start = $('#eventStart').val();
             const end = $('#eventEnd').val();
+            const status = $("input[name='status']:checked").val();
 
             $.ajax({
                 url: "{{route('events')}}",
@@ -78,6 +140,7 @@
                     room_price: room_price,
                     start: start,
                     end: end,
+                    status: status,
                     type: 'add'
                 },
                 beforeSend: function () {
@@ -151,9 +214,26 @@
                 } else {
                     event.allDay = false;
                 }
-                var newDiv = $('<div>').addClass('fc-price').html('Price : ' + event.room_price + ' OMR');
-                element.find('.fc-title').after(newDiv);
-                element.find('.fc-title').html('Availability : '+event.room_number);
+
+                if(event.status === 'closed'){
+
+                    const status = $('<div>').addClass('fc-closed').html('Closed');
+
+                    element.find('.fc-title').after(status);
+
+                }else{
+
+                    const newDiv = $('<div>').addClass('fc-price').html('Price : ' + event.room_price + ' OMR');
+                    const bookable = $('<div>').addClass('fc-bookable').html('Bookable : ' + event.bookable);
+                    const roomNumber = $('<div>').addClass('fc-room-number').html('Rooms to sell : ' + event.room_number);
+
+                    // Add the new elements after the event's title
+                    element.find('.fc-title').after(newDiv);
+                    element.find('.fc-price').after(bookable);
+                    element.find('.fc-bookable').after(roomNumber);
+                }
+
+
             },
             selectable: true,
             selectHelper: true,
@@ -169,10 +249,19 @@
                 if (events.length > 0) {
                     const roomNumber = events[0].room_number;
                     const roomPrice = events[0].room_price;
+                    const status = events[0].status;
                     $('#roomNumber').val(roomNumber);
                     $('#roomPrice').val(roomPrice);
                     $('#eventStart').val(startDate);
                     $('#eventEnd').val(endDate);
+
+                    // Check the appropriate radio button based on status
+                    if (status === 'opened') {
+                        $('#opened').prop('checked', true);
+                    } else if (status === 'closed') {
+                        $('#closed').prop('checked', true);
+                    }
+
                     $('#addEventModal').modal('show');
                 }else{
 

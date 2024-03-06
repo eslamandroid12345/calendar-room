@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->integer('room_number');
             $table->double('room_price',10,2);
+            $table->integer('bookable')->default(0);
+            $table->enum('status',['opened','closed'])->default('opened');
             $table->date('start');
             $table->date('end');
             $table->timestamps();
